@@ -1,6 +1,5 @@
 from oversampler import Oversampler as Ovs
-from bthelper import genseq
-from PIL import Image
+from PIL import Image as Im
 
 available_colors = [[202, 227, 255], # first color is unset pixel in ocean
     [255, 255, 255], # second color is unset pixel on land
@@ -30,6 +29,6 @@ available_colors = [[202, 227, 255], # first color is unset pixel in ocean
     [130, 0, 128]]   # violette
 
 o = Ovs(1, available_colors)
-im = Image.open('2.jpg')
+im = Im.open('1.jpg')
 im2 = o.sample(im)
 im2.show()

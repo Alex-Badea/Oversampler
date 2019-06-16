@@ -2,19 +2,18 @@ from functools import reduce
 from operator import add
 from bthelper import genseq
 from math import sqrt, inf, floor
-from PIL import Image
+from PIL import Image as Im
 
 class Oversampler:
-    def __init__(self, srsm, pool):
-        self._srsm = srsm
-        self._cells = self._gencells(srsm, pool)
+    def __init__(self, ss, pool):
+        self._ss = ss
+        self._cells = self._gencells(pool)
 
-    @staticmethod
-    def _gencells(srsm, pool):
+    def _gencells(self, pool):
         cells = []
-        sm = srsm**2
-        maxidx = len(pool) - 1
-        ids = genseq([0 for i in range(sm)], lambda e: e==maxidx, lambda e: e+1, lambda e: e)
+        s = self._ss ** 2
+        maxi = len(pool) - 1
+        ids = genseq([0 for _ in range(s)], lambda e: e==maxi, lambda e: e+1, lambda e: e)
         for i in ids:
             cells.append(_Cell([pool[j] for j in i]))
         return cells
@@ -29,7 +28,7 @@ class Oversampler:
         return closest
 
     def sample(self, im):
-        im2 = Image.new('RGB', (im.size[0]*self._srsm,im.size[1]*self._srsm))
+        im2 = Im.new('RGB', (im.size[0] * self._ss, im.size[1] * self._ss))
         for i in range(im.size[0]):
             for j in range(im.size[1]):
                 pix = im.getpixel((i,j))
@@ -39,22 +38,26 @@ class Oversampler:
         return im2
 
 class _Cell:
-    def __init__(self, colors):
-        self._colors = colors
-        self._averageColor = list(reduce(
-            lambda a,e: map(add, a, map(lambda e_: e_/len(colors), e)), colors, [0,0,0]))
+    def __init__(self, cols):
+        self._cols = cols
+        self._avgcol = list(reduce(
+            lambda a,e: map(add, a, map(lambda e_: e_/len(cols), e)), cols, [0, 0, 0]))
+
+    @property
+    def avgcol(self):
+        return self._avgcol
 
     def _getcol(self, i, j):
-        srsm = floor(sqrt(len(self._colors)))
-        return self._colors[srsm*i + j]
+        ss = floor(sqrt(len(self._cols)))
+        return self._cols[ss * i + j]
 
     def dist(self, col):
-        v1 = self._averageColor
+        v1 = self._avgcol
         v2 = col
         return sqrt((v1[0]-v2[0])**2 + (v1[1]-v2[1])**2 + (v1[2]-v2[2])**2)
 
     def place(self, im, x, y):
-        srsm = floor(sqrt(len(self._colors)))
-        for i in range(srsm):
-            for j in range(srsm):
-                im.putpixel((x*srsm+i, y*srsm+j), tuple(self._getcol(i,j)))
+        ss = floor(sqrt(len(self._cols)))
+        for i in range(ss):
+            for j in range(ss):
+                im.putpixel((x*ss+i, y*ss+j), tuple(self._getcol(i,j)))
