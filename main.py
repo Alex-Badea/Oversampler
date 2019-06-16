@@ -28,7 +28,7 @@ available_colors = [[202, 227, 255], # first color is unset pixel in ocean
     [207, 110, 228], # light violette
     [130, 0, 128]]   # violette
 
-o = Ovs(1, available_colors)
+o = Ovs(2, available_colors)
 im = Im.open('1.jpg')
 im2 = o.sample(im)
 im2.show()
