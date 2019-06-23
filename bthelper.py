@@ -14,7 +14,7 @@ def genseq(initstr, stopcond, incrementer, resetter):
     def PRINT(): seq.append(str.copy())
     def REACH_MSB(): return head == 0
     def UNWIND(): nonlocal head; head -= 1
-    def HALT(): nonlocal halt; halt -= 1
+    def HALT(): nonlocal halt; halt = True
 
     while not halt:
         if not STOP():

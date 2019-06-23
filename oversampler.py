@@ -1,14 +1,14 @@
 from functools import reduce
 from operator import add
 from bthelper import genseq
-from math import sqrt, inf, floor
+from math import sqrt, floor
 from PIL import Image as Im
 from scipy.spatial import KDTree as Kdt
 
 class Oversampler:
-    def __init__(self, ss, pool):
+    def __init__(self, ss, colpool):
         self._ss = ss
-        self._cells = self._gencells(pool)
+        self._cells = self._gencells(colpool)
         self._cellskdt = Kdt(list(map(lambda e: e.avgcol, self._cells)))
 
     def _gencells(self, pool):
