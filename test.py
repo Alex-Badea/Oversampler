@@ -1,26 +1,34 @@
-import multiprocessing
+from numpy import array as _
 import numpy as np
-from math import sqrt, sin
-import time
+import math
+from PIL import Image as Im
 
-def expenser_tester(num):
-   return sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(sin(num))))))))))))))))))))))
+# 3r 2c
+I = [[255, 0, 0],
+     [0, 255, 0],
+     [0, 0, 255],
+     [0, 255, 255],
+     [255, 0, 255],
+     [255, 255, 0]]
+n = 5
 
-if __name__ == '__main__':
-    n = 3000
-    starttime1 = time.time()
-    pool = multiprocessing.Pool(2)
-    pool_outputs = pool.map(expenser_tester, range(n))
-    pool.close()
-    pool.join()
-    endtime1 = time.time()
-    timetaken = endtime1 - starttime1
+im = Im.new('RGB', (3,2))
+im.putdata([tuple(e) for e in I])
+im.show()
 
-    starttime2 = time.time()
-    for i in range(n):
-        expenser_tester(i)
-    endtime2 = time.time()
-    timetaken2 = endtime2 - starttime2
+I = im.getdata()
 
-    print('The time taken with multiple processes:', timetaken)
-    print('The time taken the usual way:', timetaken2)
+I = _([_((n**2)*e).reshape((n,n,3)) for e in I])
+
+#adapt 1
+I=I.reshape((im.size[1],im.size[0],n,n,3))
+
+#adapt 2
+I=I.transpose((0,2,1,3,4))
+
+#adapt 3
+I=I.reshape((-1,3))
+
+im = Im.new('RGB', (im.size[0]*n,im.size[1]*n))
+im.putdata([tuple(e) for e in I])
+im.show()
